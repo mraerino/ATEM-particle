@@ -374,6 +374,8 @@ bool ATEMbase::_readToPacketBuffer(uint8_t maxBytes) {
  */
 void ATEMbase::_parsePacket(uint16_t packetLength)	{
 	
+	Serial.println("Parsing packet...");
+	
  		// If packet is more than an ACK packet (= if its longer than 12 bytes header), lets parse it:
       uint16_t indexPointer = 12;	// 12 bytes has already been read from the packet...
       while (indexPointer < packetLength)  {
