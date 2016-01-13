@@ -32,6 +32,9 @@ you can keep a clear conscience: http://skaarhoj.com/about/licenses/
 //#include "EthernetUdp.h"
 //  #include "SkaarhojPgmspace.h"  - 23/2 2014
 
+#define lowByte(w) ((uint8_t)((w) & 0xFF))
+#define highByte(w) ((uint8_t)((w) >> 8))
+
 uint16_t word(int w) { return (uint16_t)w; }
 uint16_t  word(uint8_t  h, uint8_t  l) { return (uint16_t)((h << 8) + l); }
 
