@@ -382,14 +382,14 @@ void ATEMbase::_parsePacket(uint16_t packetLength)	{
 
         // Read the length of segment (first word):
         _Udp.read(_packetBuffer, 8);
-        Serial.print("intro info: ");
-        Serial.println(_packetBuffer);
         _cmdLength = word(_packetBuffer[0], _packetBuffer[1]);
 		_cmdPointer = 0;
         
 			// Get the "command string", basically this is the 4 char variable name in the ATEM memory holding the various state values of the system:
         char cmdStr[] = { 
           _packetBuffer[4], _packetBuffer[5], _packetBuffer[6], _packetBuffer[7], '\0'};
+        Serial.print("packet cmd string: ");
+        Serial.println(cmdStr);
 
 			// If length of segment larger than 8 (should always be...!)
         if (_cmdLength>8)  {
