@@ -36,8 +36,8 @@ you can keep a clear conscience: http://skaarhoj.com/about/licenses/
 #define lowByte(w) ((uint8_t)((w) & 0xFF))
 #define highByte(w) ((uint8_t)((w) >> 8))
 
-uint16_t word(int w) { return (uint16_t)w; }
-uint16_t  word(uint8_t  h, uint8_t  l) { return (uint16_t)((h << 8) + l); }
+#define word(w)   (uint16_t)(w)
+#define word(h, l)   (uint16_t)((h << 8) + l)
 
 #define ATEM_headerCmd_AckRequest 0x1
 #define ATEM_headerCmd_HelloPacket 0x2
