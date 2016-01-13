@@ -382,6 +382,8 @@ void ATEMbase::_parsePacket(uint16_t packetLength)	{
 
         // Read the length of segment (first word):
         _Udp.read(_packetBuffer, 8);
+        Serial.print("intro info: ");
+        Serial.println(_packetBuffer);
         _cmdLength = word(_packetBuffer[0], _packetBuffer[1]);
 		_cmdPointer = 0;
         
