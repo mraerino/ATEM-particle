@@ -123,10 +123,10 @@ void ATEMbase::runLoop(uint16_t delayTime) {
 				 uint8_t headerBitmask = _packetBuffer[0]>>3;
 				 _lastRemotePacketID = word(_packetBuffer[10],_packetBuffer[11]);
 			 	 if (_lastRemotePacketID < ATEM_maxInitPackageCount)	{
-			 	 	_missedInitializationPackages[_lastRemotePacketID>>3] &= ~(B1<<(_lastRemotePacketID&0x07));
+			 	 	_missedInitializationPackages[_lastRemotePacketID>>3] &= ~(0b1<<(_lastRemotePacketID&0x07));
 			 	 }
 
-				 uint16_t packetLength = word(_packetBuffer[0] & B00000111, _packetBuffer[1]);
+				 uint16_t packetLength = word(_packetBuffer[0] & 0b00000111, _packetBuffer[1]);
 
 			    if (packetSize==packetLength) {  // Just to make sure these are equal, they should be!
 					_lastContact = millis();
@@ -230,7 +230,7 @@ void ATEMbase::runLoop(uint16_t delayTime) {
 		// After initialization, we check which packages were missed and ask for them:
 		if (!_hasInitialized && _initPayloadSent && !waitingForIncoming)	{
 			for(uint8_t i=1; i<_initPayloadSentAtPacketId; i++)	{
-				if (_missedInitializationPackages[i>>3] & (B1<<(i & 0x7)))	{
+				if (_missedInitializationPackages[i>>3] & (0b1<<(i & 0x7)))	{
 
 					#if ATEM_debug
 					if (_serialOutput & 0x80) 	{
