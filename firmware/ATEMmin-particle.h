@@ -30,8 +30,8 @@ you can keep a clear conscience: http://skaarhoj.com/about/licenses/
 #ifndef ATEMmin_h
 #define ATEMmin_h
 
-//#include "Arduino.h"
-#include "../ATEMbase-particle/ATEMbase-particle.h"
+#include "application.h"
+#include "ATEMbase-particle.h"
 
 
 class ATEMmin : public ATEMbase

@@ -30,7 +30,7 @@ you can keep a clear conscience: http://skaarhoj.com/about/licenses/
 #ifndef ATEMbase_h
 #define ATEMbase_h
 
-//#include "Arduino.h"
+#include "application.h"
 //#include "EthernetUdp.h"
 //  #include "SkaarhojPgmspace.h"  - 23/2 2014
 
