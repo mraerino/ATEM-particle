@@ -96,7 +96,7 @@ void ATEMbase::connect(const boolean useFixedPortNumber) {
 	_packetBuffer[12] = 0x01;	// This seems to be what the client should send upon first request. 
 	_packetBuffer[9] = 0x3a;	// This seems to be what the client should send upon first request. 
 	
-	_sendPacketBuffer(20);  
+	_sendPacketBuffer(20);
 }
 
 /**
@@ -414,6 +414,11 @@ void ATEMbase::_parseGetCommands(const char *cmdString)	{
 //	uint8_t mE, keyer, mediaPlayer, aUXChannel, windowIndex, multiViewer, memory, colorGenerator, box;
 //	uint16_t audioSource, videoSource;
 //	long temp;
+
+	if(_serialOutput) {
+		Serial.print("cmdString: ");
+		Serial.println(cmdString);
+	}
 	
 	uint8_t numberOfReads=1;
 	while(_readToPacketBuffer())	{
