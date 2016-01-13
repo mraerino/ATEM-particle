@@ -29,6 +29,7 @@ you can keep a clear conscience: http://skaarhoj.com/about/licenses/
 #define ATEMbase_h
 
 #include "application.h"
+#include "math.h"
 //#include "EthernetUdp.h"
 //  #include "SkaarhojPgmspace.h"  - 23/2 2014
 
