@@ -25,7 +25,8 @@ you can keep a clear conscience: http://skaarhoj.com/about/licenses/
 */
 
 
-
+uint16_t word(int w) { return (uint16_t)w; }
+uint16_t  word(uint8_t  h, uint8_t  l) { return (uint16_t)((h << 8) + l); }
 
 #ifndef ATEMbase_h
 #define ATEMbase_h
