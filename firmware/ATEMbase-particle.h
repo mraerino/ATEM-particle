@@ -25,15 +25,15 @@ you can keep a clear conscience: http://skaarhoj.com/about/licenses/
 */
 
 
-uint16_t word(int w) { return (uint16_t)w; }
-uint16_t  word(uint8_t  h, uint8_t  l) { return (uint16_t)((h << 8) + l); }
-
 #ifndef ATEMbase_h
 #define ATEMbase_h
 
 #include "application.h"
 //#include "EthernetUdp.h"
 //  #include "SkaarhojPgmspace.h"  - 23/2 2014
+
+uint16_t word(int w) { return (uint16_t)w; }
+uint16_t  word(uint8_t  h, uint8_t  l) { return (uint16_t)((h << 8) + l); }
 
 #define ATEM_headerCmd_AckRequest 0x1
 #define ATEM_headerCmd_HelloPacket 0x2
