@@ -61,7 +61,7 @@ void ATEMbase::begin(const IPAddress ip, const uint16_t localPort){
  * Initiating connection handshake to the ATEM switcher
  */
 void ATEMbase::connect() {
-	connect(false);
+	connect(_localPortUsed);
 }
 
 /**
@@ -69,6 +69,7 @@ void ATEMbase::connect() {
  * If useFixedPortNumber is true, the same port number will be used on subsequent connects, otherwise - and recommended - a new, random port number is used.
  */
 void ATEMbase::connect(const boolean useFixedPortNumber) {
+	_localPortUsed = useFixedPortNumber;
 	_localPacketIdCounter = 0;		// Init localPacketIDCounter to 0;
 	_initPayloadSent = false;		// Will be true after initial payload of data is delivered (regular 12-byte ping packages are transmitted.)
 	_hasInitialized = false;		// Will be true after initial payload of data is resent and received well

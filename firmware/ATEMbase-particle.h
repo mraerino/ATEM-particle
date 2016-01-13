@@ -55,6 +55,7 @@ class ATEMbase
   protected:
 	UDP _Udp;					// UDP object for communication, see constructor.
 	uint16_t _localPort; 				// Default local port to send from. Preferably it's chosen randomly inside the class.
+	boolean _localPortUsed;
 	IPAddress _switcherIP;				// IP address of the switcher
 	boolean _serialOutput;				// If set, the library will print status/debug information to the Serial object
 
