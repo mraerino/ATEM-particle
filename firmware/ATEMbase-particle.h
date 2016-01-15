@@ -50,6 +50,8 @@ you can keep a clear conscience: http://skaarhoj.com/about/licenses/
 
 #define ATEM_debug 1				// If "1" (true), more debugging information may hit the serial monitor, in particular when _serialDebug = 0x80. Setting this to "0" is recommended for production environments since it saves on flash memory.
 
+#define NET_BUFFER_SIZE 1400 // max mtu is 1400
+
 class ATEMbase
 {
   protected:
@@ -73,6 +75,8 @@ class ATEMbase
 	
 	// ATEM Buffer:
 	uint8_t _packetBuffer[ATEM_packetBufferLength];   		// Buffer for storing segments of the packets from ATEM and creating answer packets.
+	uint8_t _netBuffer[NET_BUFFER_SIZE];
+	uint16_t _netBuffer_length;
 
 	uint16_t _cmdLength;				// Used when parsing packets
 	uint16_t _cmdPointer;				// Used when parsing packets

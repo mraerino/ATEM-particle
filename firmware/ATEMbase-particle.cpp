@@ -47,6 +47,7 @@ void ATEMbase::begin(const IPAddress ip, const uint16_t localPort){
 		// Set up Udp communication object:
 	UDP Udp;
 	_Udp = Udp;
+	_Udp.setBuffer(NET_BUFFER_SIZE);
 	
 	_switcherIP = ip;			// Set switcher IP address
 	_localPort = localPort;		// Set default local port
@@ -96,7 +97,7 @@ void ATEMbase::connect(const boolean useFixedPortNumber) {
 	_packetBuffer[12] = 0x01;	// This seems to be what the client should send upon first request. 
 	_packetBuffer[9] = 0x3a;	// This seems to be what the client should send upon first request. 
 	
-	_sendPacketBuffer(20);
+	_sendPacketBuffer(20);  
 }
 
 /**
@@ -130,6 +131,10 @@ void ATEMbase::runLoop(uint16_t delayTime) {
 				 uint16_t packetLength = word(_packetBuffer[0] & 0b00000111, _packetBuffer[1]);
 
 			    if (packetSize==packetLength) {  // Just to make sure these are equal, they should be!
+			    	// PARTICLE-specific: Before sending anything, first read the whole buffer!
+			    	_netBuffer_length = _Udp.available();
+			    	_Udp.read(_netBuffer, NET_BUFFER_SIZE);
+			    
 					_lastContact = millis();
 					waitingForIncoming = false;
 	
@@ -346,20 +351,22 @@ void ATEMbase::_wipeCleanPacketBuffer() {
  * Returns false if there are no more bytes, otherwise true 
  */
 bool ATEMbase::_readToPacketBuffer() {
-	return _readToPacketBuffer(ATEM_packetBufferLength);
+	return _readToPacketBuffer(NET_BUFFER_SIZE);
 }
 bool ATEMbase::_readToPacketBuffer(uint8_t maxBytes) {
-	maxBytes = maxBytes<=ATEM_packetBufferLength ? maxBytes : ATEM_packetBufferLength;
-	int remainingBytes = _cmdLength-8-_cmdPointer;
+	maxBytes = maxBytes<=NET_BUFFER_SIZE ? maxBytes : NET_BUFFER_SIZE;
+	int remainingBytes = _netBuffer_length-_cmdPointer;
 
 	if (remainingBytes>0)	{
 		if (remainingBytes <= maxBytes)	{
-			_Udp.read(_packetBuffer, remainingBytes);
-			_cmdPointer+= remainingBytes;
+			memcpy(_packetBuffer, &_netBuffer[_cmdPointer], remainingBytes);
+			//_Udp.read(_packetBuffer, remainingBytes);
+			_cmdPointer += remainingBytes;
 			return false;	// Returns false if finished.
 		} else {
-			_Udp.read(_packetBuffer, maxBytes);
-			_cmdPointer+= maxBytes;
+			memcpy(_packetBuffer, &_netBuffer[_cmdPointer], maxBytes);
+			//_Udp.read(_packetBuffer, maxBytes);
+			_cmdPointer += maxBytes;
 			return true;	// Returns true if there are still bytes to be read.
 		}
 	} else {
@@ -374,29 +381,35 @@ bool ATEMbase::_readToPacketBuffer(uint8_t maxBytes) {
  */
 void ATEMbase::_parsePacket(uint16_t packetLength)	{
 	
-	Serial.println("Parsing packet...");
+	Serial.print("Packet length: ");
+	Serial.println(packetLength);	
 	
  		// If packet is more than an ACK packet (= if its longer than 12 bytes header), lets parse it:
       uint16_t indexPointer = 12;	// 12 bytes has already been read from the packet...
+	  _cmdPointer = 0;
       while (indexPointer < packetLength)  {
+		Serial.print("Command pointer (before read): ");
+		Serial.println(_cmdPointer);
 
         // Read the length of segment (first word):
-        _Udp.read(_packetBuffer, 8);
+        _readToPacketBuffer(8);
+        indexPointer += 8;
         _cmdLength = word(_packetBuffer[0], _packetBuffer[1]);
-		_cmdPointer = 0;
+        _cmdLength -= 8;
         
-			// Get the "command string", basically this is the 4 char variable name in the ATEM memory holding the various state values of the system:
+		// Get the "command string", basically this is the 4 char variable name in the ATEM memory holding the various state values of the system:
         char cmdStr[] = { 
           _packetBuffer[4], _packetBuffer[5], _packetBuffer[6], _packetBuffer[7], '\0'};
-        Serial.print("packet cmd string: ");
-        Serial.println(cmdStr);
+
+		Serial.print("Command: ");
+		Serial.println(cmdStr);
+		Serial.print("Command length: ");
+		Serial.println(_cmdLength);
 
 			// If length of segment larger than 8 (should always be...!)
-        if (_cmdLength>8)  {
+        if (_cmdLength>0)  {
 			_parseGetCommands(cmdStr);
-
-			while (_readToPacketBuffer())	{}	// Empty, if not done yet.
-			indexPointer+=_cmdLength;
+			indexPointer += _cmdLength;
         } else { 
       		indexPointer = 2000;
          	#if ATEM_debug 
@@ -404,10 +417,9 @@ void ATEMbase::_parsePacket(uint16_t packetLength)	{
 			#endif
 		  
 			// Flushing the buffer:
-	          while(_Udp.available()) {
-	              _Udp.read(_packetBuffer, ATEM_packetBufferLength);
-	          }
-        }
+			memset(_netBuffer, 0, NET_BUFFER_SIZE);
+			_netBuffer_length = 0;
+	    }
       }
 }
 
@@ -418,11 +430,6 @@ void ATEMbase::_parseGetCommands(const char *cmdString)	{
 //	uint8_t mE, keyer, mediaPlayer, aUXChannel, windowIndex, multiViewer, memory, colorGenerator, box;
 //	uint16_t audioSource, videoSource;
 //	long temp;
-
-	if(_serialOutput) {
-		Serial.print("cmdString: ");
-		Serial.println(cmdString);
-	}
 	
 	uint8_t numberOfReads=1;
 	while(_readToPacketBuffer())	{

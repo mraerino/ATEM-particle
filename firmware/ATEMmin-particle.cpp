@@ -55,14 +55,7 @@ void ATEMmin::_parseGetCommands(const char *cmdStr)	{
 	long temp;
 	uint8_t readBytesForTlSr;
 	
-	if (!strcmp_P(cmdStr, PSTR("AMLv")))	{
-		_readToPacketBuffer(36);
-	} else if (!strcmp_P(cmdStr, PSTR("TlSr")))	{
-		readBytesForTlSr = ((ATEM_packetBufferLength-2)/3)*3+2;
-		_readToPacketBuffer(readBytesForTlSr);
-	} else {
-		_readToPacketBuffer();	// Default
-	}
+	_readToPacketBuffer(_cmdLength);
 	
 	
 	if (!strcmp_P(cmdStr, PSTR("_pin")))	{
