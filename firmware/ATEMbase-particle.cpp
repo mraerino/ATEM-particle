@@ -381,15 +381,10 @@ bool ATEMbase::_readToPacketBuffer(uint8_t maxBytes) {
  */
 void ATEMbase::_parsePacket(uint16_t packetLength)	{
 	
-	Serial.print("Packet length: ");
-	Serial.println(packetLength);	
-	
  		// If packet is more than an ACK packet (= if its longer than 12 bytes header), lets parse it:
       uint16_t indexPointer = 12;	// 12 bytes has already been read from the packet...
 	  _cmdPointer = 0;
       while (indexPointer < packetLength)  {
-		Serial.print("Command pointer (before read): ");
-		Serial.println(_cmdPointer);
 
         // Read the length of segment (first word):
         _readToPacketBuffer(8);
@@ -400,11 +395,6 @@ void ATEMbase::_parsePacket(uint16_t packetLength)	{
 		// Get the "command string", basically this is the 4 char variable name in the ATEM memory holding the various state values of the system:
         char cmdStr[] = { 
           _packetBuffer[4], _packetBuffer[5], _packetBuffer[6], _packetBuffer[7], '\0'};
-
-		Serial.print("Command: ");
-		Serial.println(cmdStr);
-		Serial.print("Command length: ");
-		Serial.println(_cmdLength);
 
 			// If length of segment larger than 8 (should always be...!)
         if (_cmdLength>0)  {
