@@ -2,6 +2,6 @@
   "name": "ATEM-particle",
   "author": "Marcus Weiner <marcus@mlsrv.de> / SKAARHOJ K/S <info@skaarhoj.com>",
   "license": "GPL v3",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A library to control a BMD ATEM switcher in the local network"
 }
